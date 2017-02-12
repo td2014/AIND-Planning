@@ -68,7 +68,7 @@ class AirCargoProblem(Problem):
                             precond_neg = []
                             effect_add = [expr("In({}, {})".format(c, p))]
                             effect_rem = [expr("At({}, {})".format(c, a))]
-                            load = Action(expr("load({}, {}, {})".format(c, p, a)),
+                            load = Action(expr("Load({}, {}, {})".format(c, p, a)),
                                          [precond_pos, precond_neg],
                                          [effect_add, effect_rem])
                             loads.append(load)            
@@ -91,7 +91,7 @@ class AirCargoProblem(Problem):
                             precond_neg = []
                             effect_add = [expr("At({}, {})".format(c, a))]
                             effect_rem = [expr("In({}, {})".format(c, p))]
-                            unload = Action(expr("unload({}, {}, {})".format(c, p, a)),
+                            unload = Action(expr("Unload({}, {}, {})".format(c, p, a)),
                                          [precond_pos, precond_neg],
                                          [effect_add, effect_rem])
                             unloads.append(unload) 
@@ -131,17 +131,33 @@ class AirCargoProblem(Problem):
         """
         # TODO implement
         possible_actions = []
-        print("actions: state = ", state)
-        print("actions: mapping state_map = ", self.state_map)
-        # Loop over actions.
-        # If preconditions are met, then add to list of possible.
+        
+        # Instantiate knowledge base class to hold state for processing.
         kb = PropKB()
         kb.tell(decode_state(state, self.state_map).pos_sentence())
-        print("actions: pos_sentence = ", decode_state(state, self.state_map).pos_sentence() )
-        print("actions: kb.clauses = ", kb.clauses)
-#        for action in self.actions_list:
-#            if action.check_precond():
-#                possible_actions.append(action)
+        # Loop over actions.
+        # If preconditions are met, then add to list of possible.
+        for action in self.actions_list:
+            # Assume action is valid unless state clauses wrong
+            clause_test_pos_pass=True
+            clause_test_neg_pass=True
+            
+            # Below based on code snippet from aimacode.planning.Action class
+            # check for positive clauses
+            for clause in action.precond_pos:
+                if clause not in kb.clauses:
+                     clause_test_pos_pass=False
+                     break
+            # check for negative clauses
+            for clause in action.precond_neg:
+                if clause in kb.clauses:
+                     clause_test_neg_pass=False
+                     break
+            # if both positive and negative clauses appear as expected
+            # add action to list.
+            if clause_test_pos_pass and clause_test_neg_pass:
+                 possible_actions.append(action)
+                 
         return possible_actions
 
     def result(self, state: str, action: Action):

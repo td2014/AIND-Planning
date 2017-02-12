@@ -66,9 +66,9 @@ class TestAirCargoMethods(unittest.TestCase):
 
     def test_AC_actions(self):
         # to see list of possible actions, uncomment below
-        # print("\npossible actions:")
-        # for action in self.p1.actions(self.p1.initial):
-        #     print("{}{}".format(action.name, action.args))
+        print("\npossible actions:")
+        for action in self.p1.actions(self.p1.initial):
+            print("{}{}".format(action.name, action.args))
         self.assertEqual(len(self.p1.actions(self.p1.initial)), 4)
 
     def test_AC_result(self):
