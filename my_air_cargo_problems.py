@@ -171,6 +171,36 @@ class AirCargoProblem(Problem):
         """
         # TODO implement
         new_state = FluentState([], [])
+               
+        # Error trap for actions that are not part of action(state)
+        legal_action_test=False
+        for legalAction in self.actions(state):
+             if action.name==legalAction.name and action.args==legalAction.args:
+                  legal_action_test=True
+             
+        # If legal_action_continue else return unchanged state
+        if not legal_action_test:
+             return encode_state(new_state, self.state_map) 
+        #
+        # Update state based on action
+        # 
+        # Below based on code snippet from aimacode.planning.Action class 
+        #
+        kb = PropKB()
+        kb.tell(decode_state(state, self.state_map).pos_sentence())
+        # check if the preconditions are satisfied
+        # --preconditions are tested in the legal_action_test above.
+        # remove negative literals
+        for clause in action.effect_rem:
+            kb.retract(clause)
+        # add positive literals
+        for clause in action.effect_add:
+            kb.tell(clause)
+
+        # update state object
+        new_state.pos = kb.clauses
+        
+        # return result
         return encode_state(new_state, self.state_map)
 
     def goal_test(self, state: str) -> bool:
