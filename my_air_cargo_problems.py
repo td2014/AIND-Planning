@@ -131,6 +131,17 @@ class AirCargoProblem(Problem):
         """
         # TODO implement
         possible_actions = []
+        print("actions: state = ", state)
+        print("actions: mapping state_map = ", self.state_map)
+        # Loop over actions.
+        # If preconditions are met, then add to list of possible.
+        kb = PropKB()
+        kb.tell(decode_state(state, self.state_map).pos_sentence())
+        print("actions: pos_sentence = ", decode_state(state, self.state_map).pos_sentence() )
+        print("actions: kb.clauses = ", kb.clauses)
+#        for action in self.actions_list:
+#            if action.check_precond():
+#                possible_actions.append(action)
         return possible_actions
 
     def result(self, state: str, action: Action):
