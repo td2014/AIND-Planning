@@ -20,9 +20,9 @@ class TestPlanningGraphLevels(unittest.TestCase):
 
     def test_add_action_level(self):
         print("TestPlanningGraphLevels: test_add_action_level")
-        for level, nodeset in enumerate(self.pg.a_levels):
-            for node in nodeset:
-                print("Level {}: {}{})".format(level, node.action.name, node.action.args))
+        #for level, nodeset in enumerate(self.pg.a_levels):
+        #    for node in nodeset:
+        #        print("Level {}: {}{})".format(level, node.action.name, node.action.args))
         self.assertEqual(len(self.pg.a_levels[0]), 3, len(self.pg.a_levels[0]))
         self.assertEqual(len(self.pg.a_levels[1]), 6, len(self.pg.a_levels[1]))
 
