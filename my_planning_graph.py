@@ -311,7 +311,20 @@ class PlanningGraph():
         #   set iff all prerequisite literals for the action hold in S0.  This can be accomplished by testing
         #   to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
-
+        
+        if level==0:
+            self.a_levels.append(set())
+            print("add_action_level: level zero = ", level)
+#            for s0_literal in self.s_levels[0]:
+#                print("add_action_level: s0_literal = ", s0_literal.show())
+            for current_action in self.problem.get_actions():
+                print("add_action_level: current_actions = ", current_action.name)
+                self.a_levels[0].add(PgNode_a(current_action))
+                
+        else:
+            print("add_action_level: level non-zero = ", level)
+            
+            
     def add_literal_level(self, level):
         ''' add an S (literal) level to the Planning Graph
 
@@ -335,10 +348,13 @@ class PlanningGraph():
         #
         # self.s_levels.append(set())  # S0 set of s_nodes - empty to start
         # for each fluent in the initial state, add the correct literal PgNode_s
-        for literal in self.fs.pos:
-            self.s_levels[level].add(PgNode_s(literal, True))
-        for literal in self.fs.neg:
-            self.s_levels[level].add(PgNode_s(literal, False))
+        print("add_literal_level: level = ", level)
+#        for prev_a_literal in self.a_levels[level-1]:
+#            print("add_litteral_level: prev_a_literal = ", prev_a_literal)
+#        for literal in self.fs.pos:
+#            self.s_levels[level].add(PgNode_s(literal, True))
+#        for literal in self.fs.neg:
+#            self.s_levels[level].add(PgNode_s(literal, False))
                
     def update_a_mutex(self, nodeset):
         ''' Determine and update sibling mutual exclusion for A-level nodes
