@@ -316,7 +316,7 @@ class PlanningGraph():
         print()
         print("add_action_level: level = ", level)
         # Loop over possible actions in problem.
-        for current_action in self.problem.get_actions():
+        for current_action in self.all_actions:
             print()
             temp_action_parents = set() # to hold candidate literals with the right preconditions
             print("add_action_level: current_actions = ", current_action.name)
@@ -333,7 +333,7 @@ class PlanningGraph():
                         print("add_action_level: testing cur_s_node.symbol (pos) - passed.")
                         temp_action_parents.add(cur_s_node)
                         test_precond_pos.remove(cur_s_node.symbol)
-                else:
+                else: # the literal is negative
                     if cur_s_node.symbol in test_precond_neg:
                         print("add_action_level: testing cur_s_node.symbol (neg) - passed.")
                         temp_action_parents.add(cur_s_node)
@@ -368,18 +368,19 @@ class PlanningGraph():
         #   parent sets of the S nodes
         
         #
-        # Borrowing from implementation of create_graph above.
+        # Borrowing snippet from implementation of create_graph above.
         #
-        self.s_levels.append(set())  # Set of s_nodes
+        self.s_levels.append(set())  # New set of s_nodes
         # for each fluent in the initial state, add the correct literal PgNode_s
         print()
         print("add_literal_level: level = ", level)
         for prev_a_literal in self.a_levels[level-1]:
-            print("add_literal_level: prev_a_literal = ", prev_a_literal)
-        for literal in self.fs.pos:
-            self.s_levels[level].add(PgNode_s(literal, True))
-        for literal in self.fs.neg:
-            self.s_levels[level].add(PgNode_s(literal, False))
+            print("add_literal_level: prev_a_literal = ", prev_a_literal.action.name)
+            #Loop of effect nodes from previous level action and populate current level
+            for effnode in prev_a_literal.effnodes:
+                print("add_literal_level: effnode.symbol, is_pos = ", effnode.symbol, effnode.is_pos)
+                self.s_levels[level].add(effnode)
+    
                
     def update_a_mutex(self, nodeset):
         ''' Determine and update sibling mutual exclusion for A-level nodes
