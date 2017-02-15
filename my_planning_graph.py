@@ -315,10 +315,39 @@ class PlanningGraph():
         self.a_levels.append(set())
         print()
         print("add_action_level: level = ", level)
+        # Loop over possible actions in problem.
         for current_action in self.problem.get_actions():
+            print()
+            temp_action_parents = set() # to hold candidate literals with the right preconditions
             print("add_action_level: current_actions = ", current_action.name)
-            self.a_levels[level].add(PgNode_a(current_action))
-            
+            # Get the preconditions for the current action
+            test_precond_pos = current_action.precond_pos
+            test_precond_neg = current_action.precond_neg
+            print("add_action_level: test_precond_pos = ", test_precond_pos)
+            print("add_action_level: test_precond_neg = ", test_precond_neg)
+            # Loop over nodes in previous S level to see if the preconditions are met.
+            for cur_s_node in self.s_levels[level]:
+                print("add_action_level: current state symbol, isPos = ", cur_s_node.symbol, cur_s_node.is_pos)
+                if cur_s_node.is_pos: # the literal is positive
+                    if cur_s_node.symbol in test_precond_pos:
+                        print("add_action_level: testing cur_s_node.symbol (pos) - passed.")
+                        temp_action_parents.add(cur_s_node)
+                        test_precond_pos.remove(cur_s_node.symbol)
+                else:
+                    if cur_s_node.symbol in test_precond_neg:
+                        print("add_action_level: testing cur_s_node.symbol (neg) - passed.")
+                        temp_action_parents.add(cur_s_node)
+                        test_precond_neg.remove(cur_s_node.symbol)
+        
+            # If all preconditions met, add action to current level, linking to parent nodes.
+            if len(test_precond_pos)==0 and len(test_precond_neg)==0:
+                tmp_PgNode_a = PgNode_a(current_action)
+                tmp_PgNode_a.parents = temp_action_parents
+                self.a_levels[level].add(tmp_PgNode_a)
+                print("add_action_level: added action to level - name = ", current_action.name)
+                print("add_action_level: parents of action:")
+                for iParent in tmp_PgNode_a.parents:
+                    print("iParent.symbol, is_pos = ", iParent.symbol, iParent.is_pos)
             
     def add_literal_level(self, level):
         ''' add an S (literal) level to the Planning Graph
