@@ -18,7 +18,7 @@ class TestPlanningGraphLevels(unittest.TestCase):
         self.p = have_cake()
         self.pg = PlanningGraph(self.p, self.p.initial)
 
-#    @unittest.skip("Skip eval function test.")
+    @unittest.skip("Skip eval function test.")
     def test_add_action_level(self):
         for level, nodeset in enumerate(self.pg.a_levels):
             for node in nodeset:
@@ -28,7 +28,7 @@ class TestPlanningGraphLevels(unittest.TestCase):
         self.assertEqual(len(self.pg.a_levels[0]), 3, len(self.pg.a_levels[0]))
         self.assertEqual(len(self.pg.a_levels[1]), 6, len(self.pg.a_levels[1]))
 
-#    @unittest.skip("Skip eval function test.")
+    @unittest.skip("Skip eval function test.")
     def test_add_literal_level(self):
         print("TestPlanningGraphLevels: test_add_literal_level")
         for level, nodeset in enumerate(self.pg.s_levels):
@@ -40,7 +40,37 @@ class TestPlanningGraphLevels(unittest.TestCase):
         self.assertEqual(len(self.pg.s_levels[1]), 4, len(self.pg.s_levels[1]))
         self.assertEqual(len(self.pg.s_levels[2]), 4, len(self.pg.s_levels[2]))
 
-
+#    @unittest.skip("Skip eval function test.")
+    def test_examine_pgraph(self):
+        print("TestPlanningGraphLevels: test_examine_pgraph \n")
+        for level, nodeset in enumerate(self.pg.s_levels):
+            for node in nodeset:
+                print("---Literal Level {}: {})".format(level, node.literal))
+                for nparent_s in node.parents:
+                    print("Parent: Action current Level {}: {}{})".format(level, nparent_s.action.name, nparent_s.action.args))    
+                for nchild_s in node.children:
+                    print("Child: Action current Level {}: {}{})".format(level, nchild_s.action.name, nchild_s.action.args))
+                for nmutex_s in node.mutex:
+                    print("Mutex: Literal current Level {}: {})".format(level, nmutex_s.literal))
+                print()
+    
+            print("----")
+            if level < len(self.pg.a_levels):
+                for node_a in self.pg.a_levels[level]:
+                    print("+++Action Level {}: {}{})".format(level, node_a.action.name, node_a.action.args))
+                    for nparent_a in node_a.parents:
+                        print("Parent: Literal current Level {}: {})".format(level, nparent_a.literal))
+                    for nchild_a in node_a.children:
+                        print("Child: Literal current Level {}: {})".format(level, nchild_a.literal))
+                    for nmutex_a in node_a.mutex:
+                        print("Mutex: Action current Level {}: {}{})".format(level, nmutex_a.action.name, nmutex_a.action.args))
+                    print()
+                    
+                print()
+            print("====")
+            print()
+        
+        
 class TestPlanningGraphMutex(unittest.TestCase):
 #    @unittest.skip("Skip eval function test.")
     def setUp(self):
