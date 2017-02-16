@@ -346,10 +346,11 @@ class PlanningGraph():
             # If all preconditions met, add action to current level, linking to parent nodes.
             if len(test_precond_pos)==0 and len(test_precond_neg)==0:
                 tmp_PgNode_a = PgNode_a(current_action)
-                # Add parent nodes to new action node.
+                # Add parent nodes to new action node and add child to parent node.
 #                tmp_PgNode_a.parents = temp_action_parents
                 for iParent in temp_action_parents:
                     tmp_PgNode_a.parents.add(iParent)
+                    iParent.children.add(tmp_PgNode_a)
                 self.a_levels[level].add(tmp_PgNode_a)
                 print("add_action_level: added action to level - name = ", tmp_PgNode_a.action.name)
                 print("add_action_level: len of a_levels = ", len(self.a_levels[level]))
@@ -388,13 +389,39 @@ class PlanningGraph():
             for effnode in prev_a_literal.effnodes:
                 print("add_literal_level: effnode.symbol, is_pos = ", effnode.symbol, effnode.is_pos)
                 if effnode.is_pos:
-                    # Create positive literal
-                    new_s_node=PgNode_s(effnode.symbol,True) 
-                    print("add_literal_level: creating positive literal = ", effnode.symbol)
+                    # Positive literal
+                    # check to see if this node has been created previously
+                    existFound=False
+                    for existing_s_node in self.s_levels[level]:
+                        if existing_s_node.symbol==effnode.symbol and existing_s_node.is_pos:
+                            existFound=True
+                            break
+                        else:
+                            continue
+                    #If we already created a node like this, we need to reuse.
+                    if existFound:
+                        new_s_node=existing_s_node
+                        print("add_literal_level: creating positive literal - node exists at this level = ", effnode.symbol)
+                    else:
+                        new_s_node=PgNode_s(effnode.symbol,True) 
+                        print("add_literal_level: creating positive literal - new node = ", effnode.symbol)
                 else:
-                    # Create negative literal
-                    new_s_node=PgNode_s(effnode.symbol,False) 
-                    print("add_literal_level: creating negative literal = ", effnode.symbol)
+                    # Negative literal
+                    # check to see if this node has been created previously
+                    existFound=False
+                    for existing_s_node in self.s_levels[level]:
+                        if existing_s_node.symbol==effnode.symbol and not existing_s_node.is_pos:
+                            existFound=True
+                            break
+                        else:
+                            continue
+                    #If we already created a node like this, we need to reuse.        
+                    if existFound:
+                        new_s_node=existing_s_node
+                        print("add_literal_level: creating negative literal - node exists at this level = ", effnode.symbol)
+                    else:
+                        new_s_node=PgNode_s(effnode.symbol,False) 
+                        print("add_literal_level: creating negative literal - new node = ", effnode.symbol)
                     
                 #link parent action node to new s_node
                 prev_a_literal.children.add(new_s_node)
