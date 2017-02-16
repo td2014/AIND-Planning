@@ -314,15 +314,17 @@ class PlanningGraph():
         
         self.a_levels.append(set())
         print()
+        print("=====")
         print("add_action_level: level = ", level)
         # Loop over possible actions in problem.
         for current_action in self.all_actions:
             print()
             temp_action_parents = set() # to hold candidate literals with the right preconditions
-            print("add_action_level: current_actions = ", current_action.name)
+            print("add_action_level: current_action name = ", current_action.name)
+            print("add_action_level: current_action args = ", current_action.args)
             # Get the preconditions for the current action
-            test_precond_pos = current_action.precond_pos
-            test_precond_neg = current_action.precond_neg
+            test_precond_pos = list(current_action.precond_pos)
+            test_precond_neg = list(current_action.precond_neg)
             print("add_action_level: test_precond_pos = ", test_precond_pos)
             print("add_action_level: test_precond_neg = ", test_precond_neg)
             # Loop over nodes in previous S level to see if the preconditions are met.
@@ -332,19 +334,25 @@ class PlanningGraph():
                     if cur_s_node.symbol in test_precond_pos:
                         print("add_action_level: testing cur_s_node.symbol (pos) - passed.")
                         temp_action_parents.add(cur_s_node)
+                        # remove precondition from list to indicate it was satisfied
                         test_precond_pos.remove(cur_s_node.symbol)
                 else: # the literal is negative
                     if cur_s_node.symbol in test_precond_neg:
                         print("add_action_level: testing cur_s_node.symbol (neg) - passed.")
                         temp_action_parents.add(cur_s_node)
+                        # remove precondition from list to indicate it was satisfied
                         test_precond_neg.remove(cur_s_node.symbol)
         
             # If all preconditions met, add action to current level, linking to parent nodes.
             if len(test_precond_pos)==0 and len(test_precond_neg)==0:
                 tmp_PgNode_a = PgNode_a(current_action)
-                tmp_PgNode_a.parents = temp_action_parents
+                # Add parent nodes to new action node.
+#                tmp_PgNode_a.parents = temp_action_parents
+                for iParent in temp_action_parents:
+                    tmp_PgNode_a.parents.add(iParent)
                 self.a_levels[level].add(tmp_PgNode_a)
-                print("add_action_level: added action to level - name = ", current_action.name)
+                print("add_action_level: added action to level - name = ", tmp_PgNode_a.action.name)
+                print("add_action_level: len of a_levels = ", len(self.a_levels[level]))
                 print("add_action_level: parents of action:")
                 for iParent in tmp_PgNode_a.parents:
                     print("iParent.symbol, is_pos = ", iParent.symbol, iParent.is_pos)
@@ -376,10 +384,24 @@ class PlanningGraph():
         print("add_literal_level: level = ", level)
         for prev_a_literal in self.a_levels[level-1]:
             print("add_literal_level: prev_a_literal = ", prev_a_literal.action.name)
-            #Loop of effect nodes from previous level action and populate current level
+            #Loop over effect nodes from previous level action and populate current level
             for effnode in prev_a_literal.effnodes:
                 print("add_literal_level: effnode.symbol, is_pos = ", effnode.symbol, effnode.is_pos)
-                self.s_levels[level].add(effnode)
+                if effnode.is_pos:
+                    # Create positive literal
+                    new_s_node=PgNode_s(effnode.symbol,True) 
+                    print("add_literal_level: creating positive literal = ", effnode.symbol)
+                else:
+                    # Create negative literal
+                    new_s_node=PgNode_s(effnode.symbol,False) 
+                    print("add_literal_level: creating negative literal = ", effnode.symbol)
+                    
+                #link parent action node to new s_node
+                prev_a_literal.children.add(new_s_node)
+                new_s_node.parents.add(prev_a_literal)
+                
+                #add new s node to current level
+                self.s_levels[level].add(new_s_node)
     
                
     def update_a_mutex(self, nodeset):
