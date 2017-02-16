@@ -347,10 +347,10 @@ class PlanningGraph():
             if len(test_precond_pos)==0 and len(test_precond_neg)==0:
                 tmp_PgNode_a = PgNode_a(current_action)
                 # Add parent nodes to new action node and add child to parent node.
-#                tmp_PgNode_a.parents = temp_action_parents
                 for iParent in temp_action_parents:
                     tmp_PgNode_a.parents.add(iParent)
                     iParent.children.add(tmp_PgNode_a)
+                # Add action node to level.
                 self.a_levels[level].add(tmp_PgNode_a)
                 print("add_action_level: added action to level - name = ", tmp_PgNode_a.action.name)
                 print("add_action_level: len of a_levels = ", len(self.a_levels[level]))
