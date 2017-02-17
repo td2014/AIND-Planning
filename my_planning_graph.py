@@ -587,7 +587,13 @@ class PlanningGraph():
         :return: bool
         '''
         # TODO test for negation between nodes
-        return False
+        # Adapting code snippet from PgNode_s.__eq__ with == changed to !=
+        print("negation_mutex: node_s1, node_s2: ", node_s1.symbol, node_s1.is_pos, node_s2.symbol, node_s2.is_pos)
+        if (node_s1.symbol == node_s2.symbol) and (node_s1.is_pos != node_s2.is_pos):
+            print("negation_mutex: True")
+            return True
+        else:
+            return False
 
     def inconsistent_support_mutex(self, node_s1: PgNode_s, node_s2: PgNode_s):
         '''
@@ -606,7 +612,26 @@ class PlanningGraph():
         :return: bool
         '''
         # TODO test for Inconsistent Support between nodes
-        return False
+        # Steps to accomplish
+        # 1. Get list of parents of node_s1
+        # 2. Get list of parents of node_s2
+        # 3. Do a double loop over the parents.
+        # 3a. If any pair is not mutex, return False (one successful combination found)
+        
+        for test_node_s1 in node_s1.parents:
+            for test_node_s2 in node_s2.parents:
+                # Return false if we find one parent combination not mutex
+                print("inconsistent_support_mutex: node_s1 = ", node_s1.symbol, node_s1.is_pos)
+                print("inconsistent_support_mutex: node_s2 = ", node_s2.symbol, node_s2.is_pos)
+                print("inconsistent_support_mutex: test_node_s1=", test_node_s1.action.name, test_node_s1.action.args)
+                print("inconsistent_support_mutex: test_node_s2=", test_node_s2.action.name, test_node_s2.action.args)
+                if not test_node_s1.is_mutex(test_node_s2):
+                    print("inconsistent_support_mutex: Found non-mutex")
+                    return False
+                print()
+        
+        # Else return true.  All parent combinations are mutex
+        return True
 
     def h_levelsum(self) -> int:
         '''The sum of the level costs of the individual goals (admissible if goals independent)
