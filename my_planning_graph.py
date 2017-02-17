@@ -489,7 +489,6 @@ class PlanningGraph():
         '''
         # TODO test for Inconsistent Effects between nodes
         # Loop over effects of each action.  If inconsistent, flag as true.
-        return False
         for node_a1_eff in node_a1.effnodes:
             for node_a2_eff in node_a2.effnodes:
                 if node_a1_eff.symbol==node_a2_eff.symbol and node_a1_eff.is_pos != node_a2_eff.is_pos:
@@ -515,7 +514,6 @@ class PlanningGraph():
         # TODO test for Interference between nodes
         # Loop over each action pair.  If inconsistent, flag as true.
         # Check a1 prenodes vs. a2 effnodes
-        return False
         for node_a1_pre in node_a1.prenodes:
             for node_a2_eff in node_a2.effnodes:
                 if node_a1_pre.symbol==node_a2_eff.symbol and node_a1_pre.is_pos != node_a2_eff.is_pos:

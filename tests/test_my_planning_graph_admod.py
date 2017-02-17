@@ -98,7 +98,7 @@ class TestPlanningGraphMutex(unittest.TestCase):
         self.na1.parents.add(self.ns3)
         self.na2.parents.add(self.ns4)
 
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def test_serialize_mutex(self):
         self.assertTrue(PlanningGraph.serialize_actions(self.pg, self.na1, self.na2),
                         "Two persistence action nodes not marked as mutex")
@@ -106,14 +106,14 @@ class TestPlanningGraphMutex(unittest.TestCase):
         self.assertFalse(PlanningGraph.serialize_actions(self.pg, self.na1, self.na3),
                          "No-op and persistence action incorrectly marked as mutex")
     
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def test_inconsistent_effects_mutex(self):
         self.assertTrue(PlanningGraph.inconsistent_effects_mutex(self.pg, self.na4, self.na5),
                         "Canceling effects not marked as mutex")
         self.assertFalse(PlanningGraph.inconsistent_effects_mutex(self.pg, self.na1, self.na2),
                          "Non-Canceling effects incorrectly marked as mutex")
     
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def test_interference_mutex(self):
         self.assertTrue(PlanningGraph.interference_mutex(self.pg, self.na4, self.na5),
                         "Precondition from one node opposite of effect of other node should be mutex")
@@ -122,7 +122,7 @@ class TestPlanningGraphMutex(unittest.TestCase):
         self.assertFalse(PlanningGraph.interference_mutex(self.pg, self.na1, self.na2),
                          "Non-interfering incorrectly marked mutex")
 
-#    @unittest.skip("Skip eval function test.")
+    @unittest.skip("Skip eval function test.")
     def test_competing_needs_mutex(self):
         self.assertFalse(PlanningGraph.competing_needs_mutex(self.pg, self.na1, self.na2),
                          "Non-competing action nodes incorrectly marked as mutex")
@@ -159,7 +159,7 @@ class TestPlanningGraphMutex(unittest.TestCase):
             self.pg, self.ns1, self.ns2),
             "If one parent action can achieve both states, should NOT be inconsistent-support mutex, even if parent actions are themselves mutex")
 
-##        @unittest.skip("Skip eval function test.")
+    @unittest.skip("Skip eval function test.")
     def test_examine_mutex_pgraph(self):
         print("TestPlanningGraphLevels: test_examine_mutex_pgraph \n")
         for level, nodeset in enumerate(self.pg.s_levels):
