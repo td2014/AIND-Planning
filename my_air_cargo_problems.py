@@ -241,7 +241,106 @@ class AirCargoProblem(Problem):
         executed.
         '''
         # TODO implement (see Russell-Norvig Ed-3 10.2.3  or Russell-Norvig Ed-2 11.2)
+        #
         count = 0
+        # From the Russell-Norvig book, the two basic steps
+        # for this potentially inadmissible heuristic are
+        #
+        # (1) Relax actions by removing all preconditions and all effects
+        # unless an effect is a literal in a goal.
+        # (2) Count the minimum number of actions required such that the
+        # union of effects satisfies the goal
+        #
+        # The second step is an NP-hard set cover problem, but the book
+        # says there is a simple greedy algorithm which solves it within
+        # a factor of log(n), n=number of literals in goal.
+        #
+        
+        # Start of implementation
+        #
+        # Loop over all the actions and test to see if at least one of the
+        # effects is in the goal.  If so, add the action to the 
+        # running set.
+        
+        # determine state at current node
+        print()
+        fs = decode_state(node.state, self.state_map)
+        print("h_ignore_preconditions: fs.pos = ", fs.pos)
+        print("h_ignore_preconditions: fs.neg = ", fs.neg)
+        # create a holder for actions that can produce final state from here.
+        actionSet = set()
+        remainingGoals = set()
+        # Loop over goal states and compare to action effects.
+        # If a goal has already been met by current state, skip to next goal.
+        for iGoal in self.goal:
+            if iGoal in fs.pos:
+                print("h_ignore_preconditions: goal already met - skipping")
+                continue
+            else:
+                # add goal to target set
+                remainingGoals.add(iGoal)
+            print("h_ignore_preconditions: iGoal = ", iGoal)
+            print()
+            for cur_action in self.actions_list:
+                print("h_ignore_preconditions: cur_action = ", cur_action.name)
+                # get the list of positive literal effects
+                pos_effects = cur_action.effect_add
+                print("h_ignore_preconditions: pos_effects = ", pos_effects)
+                if iGoal in pos_effects:
+                    print("h_ignore_preconditions: iGoal in pos_effects")
+                    actionSet.add(cur_action)
+                print()
+            print("----")
+            print()
+        # Apply a greedy set cover algorithm on the running action set
+        # to see what the minimum set of actions are that achieve the 
+        # remaining goal state literals that have not been met.
+        #
+        # FOr this portion, I implemented based on the description
+        # from Wikipedia:  https://en.wikipedia.org/wiki/Set_cover_problem
+        # for the greedy algorithm which chooses, at each step choose
+        # the set which contains the largest number of uncovered
+        # elements.
+        #
+        # In terms of the present problem, the "Universe" is
+        # the set of remaining goal literals to be satisfied: remainingGoals
+        # and the underlying "Collection" is the set, each element
+        # of which is an action that produces at least one of the 
+        # goal literals: actionSet
+        #
+        # The steps are to loop over the actionSet, and select the
+        # action that covers the largest number of remaining goals.
+        # Then, this action is removed from the actionSet, and the
+        # effects are removed from the remaining goals set, and
+        # the counter is incremented.  Once the remaining goals set is empty
+        # terminate the algorithm and return the count.
+        #
+        #
+        coveringSet = set()
+        while len(remainingGoals)>0:
+            # define variables to hold max effect actions at each round.
+            max_action=None
+            max_eff_count=0
+            for iAction in actionSet:
+                goal_eff_count=0
+                # Loop over positive effects of current action
+                for cur_eff in iAction.effect_add:
+                    if cur_eff in remainingGoals:
+                        goal_eff_count = goal_eff_count+1
+                # Keep track of action with most coverage
+                if goal_eff_count > max_eff_count:
+                    max_eff_count=goal_eff_count
+                    max_action=iAction
+                    
+            coveringSet.add(max_action)
+            # remove the effects from the remaining goals set
+            for eff_to_remove in max_action.effect_add:
+                remainingGoals.discard(eff_to_remove) #removes if present
+            
+        # return the size of the covering set
+        count = len(coveringSet)
+        print("h_ignore_preconditions: covering set size = ", count)
+            
         return count
 
 
