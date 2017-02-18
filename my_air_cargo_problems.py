@@ -327,7 +327,7 @@ class AirCargoProblem(Problem):
             # define variables to hold max effect actions at each round.
             max_action=None
             max_eff_count=0
-            for iAction in actionSet:
+            for iAction in actionSet:  #List of possible actions
                 goal_eff_count=0
                 # Loop over positive effects of current action
                 for cur_eff in iAction.effect_add:
@@ -337,7 +337,8 @@ class AirCargoProblem(Problem):
                 if goal_eff_count > max_eff_count:
                     max_eff_count=goal_eff_count
                     max_action=iAction
-                    
+             
+            #Add maximum covering action to covering set
             coveringSet.add(max_action)
             # remove the effects from the remaining goals set
             for eff_to_remove in max_action.effect_add:
