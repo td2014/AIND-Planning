@@ -72,7 +72,7 @@ class TestPlanningGraphLevels(unittest.TestCase):
         
         
 class TestPlanningGraphMutex(unittest.TestCase):
-#    @unittest.skip("Skip eval function test.")
+    @unittest.skip("Skip eval function test.")
     def setUp(self):
         self.p = have_cake()
         self.pg = PlanningGraph(self.p, self.p.initial)
@@ -130,7 +130,7 @@ class TestPlanningGraphMutex(unittest.TestCase):
         self.assertTrue(PlanningGraph.competing_needs_mutex(self.pg, self.na1, self.na2),
                         "Opposite preconditions from two action nodes not marked as mutex")
 
-#    @unittest.skip("Skip eval function test.")
+    @unittest.skip("Skip eval function test.")
     def test_negation_mutex(self):
         self.assertTrue(PlanningGraph.negation_mutex(self.pg, self.ns1, self.ns3),
                         "Opposite literal nodes not found to be Negation mutex")
@@ -190,12 +190,12 @@ class TestPlanningGraphMutex(unittest.TestCase):
             print()
 
 class TestPlanningGraphHeuristics(unittest.TestCase):
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def setUp(self):
         self.p = have_cake()
         self.pg = PlanningGraph(self.p, self.p.initial)
 
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def test_levelsum(self):
         self.assertEqual(self.pg.h_levelsum(), 1)
 

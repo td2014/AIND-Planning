@@ -641,4 +641,29 @@ class PlanningGraph():
         level_sum = 0
         # TODO implement
         # for each goal in the problem, determine the level cost, then add them together
+        # Steps to compute
+        # - Get list of goals
+        # - Loop over each goal
+        # - Loop of s_levels.
+        # --For each s_level, check to see if the goal literal is present
+        # --If the goal literal is present, add the level to the sum and continue to
+        # --next goal literal.  This should provide the earliest level the
+        # --goal literal appears.  
+        # It is assumed that the goal is achievable - aren't testing for this.
+        #
+        # keep track of goal literals as the are found, so we only get the lowest level in the sum.
+        foundGoals = set()
+        for iGoal in self.problem.goal:
+            print("h_levelsum: iGoal = ", iGoal)
+            for level in range(len(self.s_levels)):
+                cur_node_set = self.s_levels[level]
+                for test_node in cur_node_set:
+                    # only process if this is the first time we have seen this goal literal
+                    print("h_levelsum: test_node.literal, iGoal = ", test_node.literal, iGoal)
+                    if test_node.literal==iGoal and not (iGoal in foundGoals):
+                        #update level sum with current level and exit this goal
+                        level_sum=level_sum+level
+                        foundGoals.add(iGoal)
+                        print("h_levelsum: Found goal-updating sum with level. new sum = ", level, level_sum)
+        
         return level_sum
