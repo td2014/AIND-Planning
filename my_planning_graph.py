@@ -313,32 +313,21 @@ class PlanningGraph():
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
         
         self.a_levels.append(set())
-###        print()
-###        print("=====")
-###        print("add_action_level: level = ", level)
         # Loop over possible actions in problem.
         for current_action in self.all_actions:
-###            print()
             temp_action_parents = set() # to hold candidate literals with the right preconditions
-###            print("add_action_level: current_action name = ", current_action.name)
-###            print("add_action_level: current_action args = ", current_action.args)
             # Get the preconditions for the current action
             test_precond_pos = list(current_action.precond_pos)
             test_precond_neg = list(current_action.precond_neg)
-###            print("add_action_level: test_precond_pos = ", test_precond_pos)
-###            print("add_action_level: test_precond_neg = ", test_precond_neg)
             # Loop over nodes in previous S level to see if the preconditions are met.
             for cur_s_node in self.s_levels[level]:
-###                print("add_action_level: current state symbol, isPos = ", cur_s_node.symbol, cur_s_node.is_pos)
                 if cur_s_node.is_pos: # the literal is positive
                     if cur_s_node.symbol in test_precond_pos:
-###                        print("add_action_level: testing cur_s_node.symbol (pos) - passed.")
                         temp_action_parents.add(cur_s_node)
                         # remove precondition from list to indicate it was satisfied
                         test_precond_pos.remove(cur_s_node.symbol)
                 else: # the literal is negative
                     if cur_s_node.symbol in test_precond_neg:
-###                        print("add_action_level: testing cur_s_node.symbol (neg) - passed.")
                         temp_action_parents.add(cur_s_node)
                         # remove precondition from list to indicate it was satisfied
                         test_precond_neg.remove(cur_s_node.symbol)
@@ -352,11 +341,7 @@ class PlanningGraph():
                     iParent.children.add(tmp_PgNode_a)
                 # Add action node to level.
                 self.a_levels[level].add(tmp_PgNode_a)
-###                print("add_action_level: added action to level - name = ", tmp_PgNode_a.action.name)
-###                print("add_action_level: len of a_levels = ", len(self.a_levels[level]))
-###                print("add_action_level: parents of action:")
-###                for iParent in tmp_PgNode_a.parents:
-###                    print("iParent.symbol, is_pos = ", iParent.symbol, iParent.is_pos)
+
             
     def add_literal_level(self, level):
         ''' add an S (literal) level to the Planning Graph
@@ -381,13 +366,9 @@ class PlanningGraph():
         #
         self.s_levels.append(set())  # New set of s_nodes
         # for each fluent in the initial state, add the correct literal PgNode_s
-###        print()
-###        print("add_literal_level: level = ", level)
         for prev_a_literal in self.a_levels[level-1]:
-###            print("add_literal_level: prev_a_literal = ", prev_a_literal.action.name)
             #Loop over effect nodes from previous level action and populate current level
             for effnode in prev_a_literal.effnodes:
-###                print("add_literal_level: effnode.symbol, is_pos = ", effnode.symbol, effnode.is_pos)
                 if effnode.is_pos:
                     # Positive literal
                     # check to see if this node has been created previously
@@ -401,10 +382,8 @@ class PlanningGraph():
                     #If we already created a node like this, we need to reuse.
                     if existFound:
                         new_s_node=existing_s_node
-###                        print("add_literal_level: creating positive literal - node exists at this level = ", effnode.symbol)
                     else:
                         new_s_node=PgNode_s(effnode.symbol,True) 
-###                        print("add_literal_level: creating positive literal - new node = ", effnode.symbol)
                 else:
                     # Negative literal
                     # check to see if this node has been created previously
@@ -418,10 +397,8 @@ class PlanningGraph():
                     #If we already created a node like this, we need to reuse.        
                     if existFound:
                         new_s_node=existing_s_node
-###                        print("add_literal_level: creating negative literal - node exists at this level = ", effnode.symbol)
                     else:
                         new_s_node=PgNode_s(effnode.symbol,False) 
-###                        print("add_literal_level: creating negative literal - new node = ", effnode.symbol)
                     
                 #link parent action node to new s_node
                 prev_a_literal.children.add(new_s_node)
@@ -541,15 +518,10 @@ class PlanningGraph():
 
         # TODO test for Competing Needs between nodes
         # Loop over preconditions of each action.  If mutex, flag as true.
-###        print("competing_needs_mutex: node_a1, node_a2: ", node_a1.action.name, node_a1.action.args, node_a2.action.name, node_a2.action.args, )
         for node_a1_pre in node_a1.parents:
             for node_a2_pre in node_a2.parents:
-###                print("competing_needs_mutex: node_a1_pre.symbol, is_pos = ", node_a1_pre.symbol, node_a1_pre.is_pos)
-###                print("competing_needs_mutex: node_a2_pre.symbol, is_pos = ", node_a2_pre.symbol, node_a2_pre.is_pos)
                 if node_a1_pre.is_mutex(node_a2_pre):    
-###                    print("competing_needs_mutex: True")
                     return True
-###                print()
         
         # No inconsistency found.
         return False
@@ -588,9 +560,7 @@ class PlanningGraph():
         '''
         # TODO test for negation between nodes
         # Adapting code snippet from PgNode_s.__eq__ with == changed to !=
-###        print("negation_mutex: node_s1, node_s2: ", node_s1.symbol, node_s1.is_pos, node_s2.symbol, node_s2.is_pos)
         if (node_s1.symbol == node_s2.symbol) and (node_s1.is_pos != node_s2.is_pos):
-###            print("negation_mutex: True")
             return True
         else:
             return False
@@ -621,14 +591,8 @@ class PlanningGraph():
         for test_node_s1 in node_s1.parents:
             for test_node_s2 in node_s2.parents:
                 # Return false if we find one parent combination not mutex
-###                print("inconsistent_support_mutex: node_s1 = ", node_s1.symbol, node_s1.is_pos)
-###                print("inconsistent_support_mutex: node_s2 = ", node_s2.symbol, node_s2.is_pos)
-###                print("inconsistent_support_mutex: test_node_s1=", test_node_s1.action.name, test_node_s1.action.args)
-###                print("inconsistent_support_mutex: test_node_s2=", test_node_s2.action.name, test_node_s2.action.args)
                 if not test_node_s1.is_mutex(test_node_s2):
-###                    print("inconsistent_support_mutex: Found non-mutex")
                     return False
-###                print()
         
         # Else return true.  All parent combinations are mutex
         return True
@@ -654,16 +618,13 @@ class PlanningGraph():
         # keep track of goal literals as the are found, so we only get the lowest level in the sum.
         foundGoals = set()
         for iGoal in self.problem.goal:
-###            print("h_levelsum: iGoal = ", iGoal)
             for level in range(len(self.s_levels)):
                 cur_node_set = self.s_levels[level]
                 for test_node in cur_node_set:
                     # only process if this is the first time we have seen this goal literal
-###                    print("h_levelsum: test_node.literal, iGoal = ", test_node.literal, iGoal)
                     if test_node.literal==iGoal and not (iGoal in foundGoals):
                         #update level sum with current level and exit this goal
                         level_sum=level_sum+level
                         foundGoals.add(iGoal)
-###                        print("h_levelsum: Found goal-updating sum with level. new sum = ", level, level_sum)
         
         return level_sum
