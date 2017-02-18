@@ -59,22 +59,14 @@ class TestAirCargoProb3(unittest.TestCase):
 class TestAirCargoMethods(unittest.TestCase):
 
 #    @unittest.skip("Skip eval function test.")
-#    def setUp(self):
-#        self.p1 = air_cargo_p1()
-#        self.act1 = Action(
-#            expr('Load(C1, P1, SFO)'),
-#            [[expr('At(C1, SFO)'), expr('At(P1, SFO)')], []],
-#            [[expr('In(C1, P1)')], [expr('At(C1, SFO)')]]
-#        )
-      
-#    @unittest.skip("Skip eval function test.")
     def setUp(self):
         self.p1 = air_cargo_p1()
         self.act1 = Action(
             expr('Load(C1, P1, SFO)'),
             [[expr('At(C1, SFO)'), expr('At(P1, SFO)')], []],
-            [[expr('In(C1, P1)')], [expr('~At(C1, SFO)')]]
-        )        
+            [[expr('In(C1, P1)')], [expr('At(C1, SFO)')]]
+        )
+          
 
     @unittest.skip("Skip eval function test.")
     def test_AC_get_actions(self):

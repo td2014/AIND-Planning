@@ -262,7 +262,7 @@ class AirCargoProblem(Problem):
         # effects is in the goal.  If so, add the action to the 
         # running set.
         
-        # determine state at current node
+        # determine state at current passed in node
         print()
         fs = decode_state(node.state, self.state_map)
         print("h_ignore_preconditions: fs.pos = ", fs.pos)
@@ -282,7 +282,7 @@ class AirCargoProblem(Problem):
             print("h_ignore_preconditions: iGoal = ", iGoal)
             print()
             for cur_action in self.actions_list:
-                print("h_ignore_preconditions: cur_action = ", cur_action.name)
+                print("h_ignore_preconditions: cur_action, args = ", cur_action.name, cur_action.args)
                 # get the list of positive literal effects
                 pos_effects = cur_action.effect_add
                 print("h_ignore_preconditions: pos_effects = ", pos_effects)
@@ -292,11 +292,19 @@ class AirCargoProblem(Problem):
                 print()
             print("----")
             print()
+        
+        print("h_ignore_preconditions: remainingGoals = ", remainingGoals)
+        print()
+        print("h_ignore_preconditions: actionSet:")
+        for iAction in actionSet:
+            print("h_ignore_preconditions: actionSet:", iAction.name, iAction.args)
+        
+        #
         # Apply a greedy set cover algorithm on the running action set
         # to see what the minimum set of actions are that achieve the 
         # remaining goal state literals that have not been met.
         #
-        # FOr this portion, I implemented based on the description
+        # For this portion, I implemented based on the description
         # from Wikipedia:  https://en.wikipedia.org/wiki/Set_cover_problem
         # for the greedy algorithm which chooses, at each step choose
         # the set which contains the largest number of uncovered
@@ -308,13 +316,11 @@ class AirCargoProblem(Problem):
         # of which is an action that produces at least one of the 
         # goal literals: actionSet
         #
-        # The steps are to loop over the actionSet, and select the
+        # The steps are to loop over actionSet, and select the
         # action that covers the largest number of remaining goals.
-        # Then, this action is removed from the actionSet, and the
-        # effects are removed from the remaining goals set, and
-        # the counter is incremented.  Once the remaining goals set is empty
-        # terminate the algorithm and return the count.
-        #
+        # The effects are removed from the remaining goals set.
+        # Once the remaining goals set is empty
+        # terminate the algorithm and return the size of the covering set.
         #
         coveringSet = set()
         while len(remainingGoals)>0:
@@ -338,6 +344,10 @@ class AirCargoProblem(Problem):
                 remainingGoals.discard(eff_to_remove) #removes if present
             
         # return the size of the covering set
+        for testAction in coveringSet:
+            print("h_ignore_preconditions: covering set action name, args = ", testAction.name, testAction.args)
+            
+        print()
         count = len(coveringSet)
         print("h_ignore_preconditions: covering set size = ", count)
             
