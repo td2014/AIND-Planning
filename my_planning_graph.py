@@ -540,13 +540,13 @@ class PlanningGraph():
         '''
 
         # TODO test for Competing Needs between nodes
-        # Loop over preconditions of each action.  If inconsistent, flag as true.
+        # Loop over preconditions of each action.  If mutex, flag as true.
 ###        print("competing_needs_mutex: node_a1, node_a2: ", node_a1.action.name, node_a1.action.args, node_a2.action.name, node_a2.action.args, )
-        for node_a1_pre in node_a1.prenodes:
-            for node_a2_pre in node_a2.prenodes:
+        for node_a1_pre in node_a1.parents:
+            for node_a2_pre in node_a2.parents:
 ###                print("competing_needs_mutex: node_a1_pre.symbol, is_pos = ", node_a1_pre.symbol, node_a1_pre.is_pos)
 ###                print("competing_needs_mutex: node_a2_pre.symbol, is_pos = ", node_a2_pre.symbol, node_a2_pre.is_pos)
-                if node_a1_pre.symbol==node_a2_pre.symbol and node_a1_pre.is_pos != node_a2_pre.is_pos:
+                if node_a1_pre.is_mutex(node_a2_pre):    
 ###                    print("competing_needs_mutex: True")
                     return True
 ###                print()
