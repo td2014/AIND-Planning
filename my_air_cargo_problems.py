@@ -242,7 +242,6 @@ class AirCargoProblem(Problem):
         '''
         # TODO implement (see Russell-Norvig Ed-3 10.2.3  or Russell-Norvig Ed-2 11.2)
         #
-        count = 0
         # From the Russell-Norvig book, the two basic steps
         # for this potentially inadmissible heuristic are
         #
@@ -263,41 +262,25 @@ class AirCargoProblem(Problem):
         # running set.
         
         # determine state at current passed in node
-        print()
         fs = decode_state(node.state, self.state_map)
-        print("h_ignore_preconditions: fs.pos = ", fs.pos)
-        print("h_ignore_preconditions: fs.neg = ", fs.neg)
         # create a holder for actions that can produce final state from here.
         actionSet = set()
         remainingGoals = set()
         # Loop over goal states and compare to action effects.
-        # If a goal has already been met by current state, skip to next goal.
         for iGoal in self.goal:
+            # If a goal has already been met by current state, skip to next goal.
             if iGoal in fs.pos:
-                print("h_ignore_preconditions: goal already met - skipping")
                 continue
             else:
                 # add goal to target set
                 remainingGoals.add(iGoal)
-            print("h_ignore_preconditions: iGoal = ", iGoal)
-            print()
             for cur_action in self.actions_list:
-                print("h_ignore_preconditions: cur_action, args = ", cur_action.name, cur_action.args)
                 # get the list of positive literal effects
                 pos_effects = cur_action.effect_add
-                print("h_ignore_preconditions: pos_effects = ", pos_effects)
+                #if the goal is covered by the effects of this action, add the action
                 if iGoal in pos_effects:
-                    print("h_ignore_preconditions: iGoal in pos_effects")
                     actionSet.add(cur_action)
-                print()
-            print("----")
-            print()
         
-        print("h_ignore_preconditions: remainingGoals = ", remainingGoals)
-        print()
-        print("h_ignore_preconditions: actionSet:")
-        for iAction in actionSet:
-            print("h_ignore_preconditions: actionSet:", iAction.name, iAction.args)
         
         #
         # Apply a greedy set cover algorithm on the running action set
@@ -345,14 +328,7 @@ class AirCargoProblem(Problem):
                 remainingGoals.discard(eff_to_remove) #removes if present
             
         # return the size of the covering set
-        for testAction in coveringSet:
-            print("h_ignore_preconditions: covering set action name, args = ", testAction.name, testAction.args)
-            
-        print()
-        count = len(coveringSet)
-        print("h_ignore_preconditions: covering set size = ", count)
-            
-        return count
+        return len(coveringSet)
 
 
 def air_cargo_p1() -> AirCargoProblem:
