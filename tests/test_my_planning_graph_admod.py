@@ -13,29 +13,29 @@ from my_planning_graph import (
 
 
 class TestPlanningGraphLevels(unittest.TestCase):
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def setUp(self):
         self.p = have_cake()
         self.pg = PlanningGraph(self.p, self.p.initial)
 
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def test_add_action_level(self):
-        for level, nodeset in enumerate(self.pg.a_levels):
-            for node in nodeset:
-                print("Level {}: {}{})".format(level, node.action.name, node.action.args))
-                node.show()
-                print()
+###        for level, nodeset in enumerate(self.pg.a_levels):
+###            for node in nodeset:
+###                print("Level {}: {}{})".format(level, node.action.name, node.action.args))
+###                node.show()
+###                print()
         self.assertEqual(len(self.pg.a_levels[0]), 3, len(self.pg.a_levels[0]))
         self.assertEqual(len(self.pg.a_levels[1]), 6, len(self.pg.a_levels[1]))
 
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def test_add_literal_level(self):
-        print("TestPlanningGraphLevels: test_add_literal_level")
-        for level, nodeset in enumerate(self.pg.s_levels):
-            for node in nodeset:
-                print("Level {}: {})".format(level, node.literal))
-                node.show()
-                print()
+###        print("TestPlanningGraphLevels: test_add_literal_level")
+###        for level, nodeset in enumerate(self.pg.s_levels):
+###            for node in nodeset:
+###                print("Level {}: {})".format(level, node.literal))
+###                node.show()
+###                print()
         self.assertEqual(len(self.pg.s_levels[0]), 2, len(self.pg.s_levels[0]))
         self.assertEqual(len(self.pg.s_levels[1]), 4, len(self.pg.s_levels[1]))
         self.assertEqual(len(self.pg.s_levels[2]), 4, len(self.pg.s_levels[2]))
@@ -72,7 +72,7 @@ class TestPlanningGraphLevels(unittest.TestCase):
         
         
 class TestPlanningGraphMutex(unittest.TestCase):
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def setUp(self):
         self.p = have_cake()
         self.pg = PlanningGraph(self.p, self.p.initial)
@@ -98,7 +98,7 @@ class TestPlanningGraphMutex(unittest.TestCase):
         self.na1.parents.add(self.ns3)
         self.na2.parents.add(self.ns4)
 
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def test_serialize_mutex(self):
         self.assertTrue(PlanningGraph.serialize_actions(self.pg, self.na1, self.na2),
                         "Two persistence action nodes not marked as mutex")
@@ -106,14 +106,14 @@ class TestPlanningGraphMutex(unittest.TestCase):
         self.assertFalse(PlanningGraph.serialize_actions(self.pg, self.na1, self.na3),
                          "No-op and persistence action incorrectly marked as mutex")
     
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def test_inconsistent_effects_mutex(self):
         self.assertTrue(PlanningGraph.inconsistent_effects_mutex(self.pg, self.na4, self.na5),
                         "Canceling effects not marked as mutex")
         self.assertFalse(PlanningGraph.inconsistent_effects_mutex(self.pg, self.na1, self.na2),
                          "Non-Canceling effects incorrectly marked as mutex")
     
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def test_interference_mutex(self):
         self.assertTrue(PlanningGraph.interference_mutex(self.pg, self.na4, self.na5),
                         "Precondition from one node opposite of effect of other node should be mutex")
@@ -130,14 +130,14 @@ class TestPlanningGraphMutex(unittest.TestCase):
         self.assertTrue(PlanningGraph.competing_needs_mutex(self.pg, self.na1, self.na2),
                         "Opposite preconditions from two action nodes not marked as mutex")
 
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def test_negation_mutex(self):
         self.assertTrue(PlanningGraph.negation_mutex(self.pg, self.ns1, self.ns3),
                         "Opposite literal nodes not found to be Negation mutex")
         self.assertFalse(PlanningGraph.negation_mutex(self.pg, self.ns1, self.ns2),
                          "Same literal nodes found to be Negation mutex")
 
-    @unittest.skip("Skip eval function test.")
+#    @unittest.skip("Skip eval function test.")
     def test_inconsistent_support_mutex(self):
         self.assertFalse(PlanningGraph.inconsistent_support_mutex(self.pg, self.ns1, self.ns2),
                          "Independent node paths should NOT be inconsistent-support mutex")
